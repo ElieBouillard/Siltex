@@ -5,6 +5,7 @@ using Mirror;
 
 public class PlayerSpell : NetworkBehaviour
 {
+    [SerializeField] private LayerMask floorMask;
     [SerializeField] private Transform launchAt = null;
     [SerializeField] private GameObject qSpellObj = null;
     [SerializeField] private GameObject qSpellOnFloorImage = null;
@@ -39,7 +40,7 @@ public class PlayerSpell : NetworkBehaviour
 
         if (!hasAuthority) { return; }
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity);
+        Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, floorMask);
         Vector3 mousePos = new Vector3(hit.point.x, transform.position.y, hit.point.z);
         qSpellOnFloorImage.transform.forward = (mousePos - transform.position).normalized;
         qSpellOnFloorSpriteRenderer.color = (canQSpell) ? Color.green : Color.red;

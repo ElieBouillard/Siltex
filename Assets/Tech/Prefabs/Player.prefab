@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 6760067484786919538}
   - component: {fileID: 696258211623884028}
   - component: {fileID: 54023401705785163}
+  - component: {fileID: 1702223020463212251}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -165,6 +166,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 64
   launchAt: {fileID: 4610004256912230597}
   qSpellObj: {fileID: 1312395184589769151, guid: c9ef378a187a760468d02047f2cbb09f, type: 3}
   qSpellOnFloorImage: {fileID: 4794686069514659462}
@@ -199,6 +203,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: {fileID: 696258211623884028}
   healthBarImage: {fileID: 6868242582520728606}
+--- !u!114 &1702223020463212251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4348667537770400809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 451411faa3d6c554da13398545e03c34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4794686069514659462
 GameObject:
   m_ObjectHideFlags: 0
