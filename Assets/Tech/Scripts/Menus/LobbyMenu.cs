@@ -11,6 +11,10 @@ public class LobbyMenu : MonoBehaviour
     [SerializeField] private GameObject lobbyUI = null;
     [SerializeField] private Button startGameButton = null;
     [SerializeField] private TMP_Text[] playerNameTexts = new TMP_Text[4];
+    //[SerializeField] private RawImage z = null;
+
+    //[SyncVar(hook = nameof(HandleSteamIdUpdated))]
+    //private ulong steamId;
 
     private void OnEnable()
     {
@@ -31,6 +35,17 @@ public class LobbyMenu : MonoBehaviour
         lobbyUI.SetActive(true);
     }
 
+    //[Server]
+    //public void SetSteamId(ulong steamId)
+    //{
+    //    this.steamId = steamId;
+    //}
+
+    //private void HandleSteamIdUpdated(ulong oldSteamId, ulong newSteamId)
+    //{
+
+    //}
+
     private void ClientHandleInfoUpdated()
     {
         List<SiltexPlayer> players = ((SiltexNetworkManager)NetworkManager.singleton).Players;
@@ -45,7 +60,7 @@ public class LobbyMenu : MonoBehaviour
             playerNameTexts[i].text = "Waiting For Player...";
         }
 
-        startGameButton.interactable = players.Count >= 2;
+        startGameButton.interactable = true/*players.Count >= 2*/;
     }
 
     private void AuthorityHandlePartyOwnerStateUpdated(bool state)
