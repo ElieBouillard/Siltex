@@ -31,6 +31,8 @@ public class Projectile : NetworkBehaviour
     [ServerCallback]
     private void OnTriggerEnter(Collider other)
     {
+        if(other.GetComponent<Projectile>()) { return; } 
+
         if(other.TryGetComponent<NetworkIdentity>(out NetworkIdentity networkIdentity))
         {
             if(networkIdentity.connectionToClient == connectionToClient) { return; }

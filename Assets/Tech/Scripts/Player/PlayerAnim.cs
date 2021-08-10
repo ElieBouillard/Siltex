@@ -26,4 +26,10 @@ public class PlayerAnim : NetworkBehaviour
     {
         playerAnimator.SetBool("Run", state);
     }
+
+    [ClientRpc]
+    public void CastSpellAnim()
+    {
+        playerAnimator.SetTrigger("CastSpell");
+    }
 }

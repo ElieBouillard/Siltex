@@ -6,22 +6,29 @@ using Mirror;
 public class PlayerSpell : NetworkBehaviour
 {
     [SerializeField] private PlayerMovement playerMovement;
+    [SerializeField] private PlayerAnim playerAnim;
     [SerializeField] private LayerMask floorMask;
     [SerializeField] private Transform launchAt = null;
     [SerializeField] private GameObject qSpellObj = null;
     [SerializeField] private GameObject qSpellOnFloorImage = null;
     [SerializeField] private SpriteRenderer qSpellOnFloorSpriteRenderer = null;
     [SerializeField] private float qSpellCD = 0;
-    [SerializeField] private float qSpellFreezeTime = 0.5f;
-    
+    [SerializeField] private float qSpellCanalisationTime = 0.5f;
+
     [SyncVar]
     private bool canQSpell = true;
-    [SyncVar]
     private float currQSpellCD = 0f;
 
-    private void Start()
+    private float currQSpellCanalisation = 0f;
+    private Vector3? currQSpellDir = null;
+
+    public override void OnStartServer()
     {
-        currQSpellCD = qSpellCD;
+        currQSpellCD = qSpellCD;        
+    }
+
+    public override void OnStartClient()
+    {
         if (!hasAuthority) { qSpellOnFloorImage.SetActive(false); }
     }
 
@@ -38,6 +45,18 @@ public class PlayerSpell : NetworkBehaviour
                 canQSpell = true;
                 currQSpellCD = qSpellCD;
             }
+
+            if(currQSpellCanalisation > 0)
+            {
+                currQSpellCanalisation -= Time.deltaTime;
+            }
+            else
+            {
+                if(currQSpellDir != null)
+                {
+                    Shoot();
+                }
+            }
         }
 
         //Show SpellOnFloor
@@ -53,10 +72,21 @@ public class PlayerSpell : NetworkBehaviour
     public void CmdTryShoot(Vector3 dir)
     {
         if (!canQSpell) { return; }
-        GameObject projectileInstance = Instantiate(qSpellObj, launchAt.position, Quaternion.LookRotation(dir));
+
+        playerMovement.FreezePlayer(qSpellCanalisationTime);
+        playerAnim.CastSpellAnim();
+        currQSpellCanalisation = qSpellCanalisationTime - 0.75f;
+        currQSpellDir = dir;
+        transform.forward = currQSpellDir.Value;
+        canQSpell = false;
+    }
+
+    [Server]
+    public void Shoot()
+    {
+        GameObject projectileInstance = Instantiate(qSpellObj, launchAt.position, Quaternion.LookRotation(currQSpellDir.Value));
         NetworkServer.Spawn(projectileInstance, connectionToClient);
         projectileInstance.GetComponent<Projectile>().SetStartPos(launchAt.position);
-        playerMovement.FreezePlayer(qSpellFreezeTime);
-        canQSpell = false;
+        currQSpellDir = null;
     }
 }

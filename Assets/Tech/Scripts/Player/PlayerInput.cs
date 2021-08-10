@@ -27,10 +27,15 @@ public class PlayerInput : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-            Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity);
+            Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, floorMask);
             Vector3 dir = (hit.point - transform.position).normalized;
             dir.y = 0;
             playerSpell.CmdTryShoot(dir);
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            playerMovement.CmdStopMove();
         }
     }
 }

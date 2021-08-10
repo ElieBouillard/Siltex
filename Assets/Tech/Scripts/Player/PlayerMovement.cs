@@ -15,6 +15,12 @@ public class PlayerMovement : NetworkBehaviour
         ServerMove(pos);
     }
 
+    [Command]
+    public void CmdStopMove()
+    {
+        m_agent.ResetPath();
+    }
+
     [Server]
     private void ServerMove(Vector3 pos)
     {
