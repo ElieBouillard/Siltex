@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using System;
+using UnityEngine.SceneManagement;
+using UnityEngine.AI;
 
 
 public class SiltexNetworkManager : NetworkManager
@@ -38,7 +40,7 @@ public class SiltexNetworkManager : NetworkManager
 
     public void StartGame()
     {
-        if(Players.Count < 2) { return; }
+        //if(Players.Count < 2) { return; }
 
         isGameInProgress = true;
 
@@ -57,7 +59,6 @@ public class SiltexNetworkManager : NetworkManager
 
         player.SetPartyOwner(Players.Count == 1);
     }
-
     #endregion
 
     #region Client

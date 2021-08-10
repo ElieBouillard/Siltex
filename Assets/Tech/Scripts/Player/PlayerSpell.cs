@@ -5,12 +5,14 @@ using Mirror;
 
 public class PlayerSpell : NetworkBehaviour
 {
+    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private LayerMask floorMask;
     [SerializeField] private Transform launchAt = null;
     [SerializeField] private GameObject qSpellObj = null;
     [SerializeField] private GameObject qSpellOnFloorImage = null;
     [SerializeField] private SpriteRenderer qSpellOnFloorSpriteRenderer = null;
     [SerializeField] private float qSpellCD = 0;
+    [SerializeField] private float qSpellFreezeTime = 0.5f;
     
     [SyncVar]
     private bool canQSpell = true;
@@ -38,6 +40,7 @@ public class PlayerSpell : NetworkBehaviour
             }
         }
 
+        //Show SpellOnFloor
         if (!hasAuthority) { return; }
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, floorMask);
@@ -53,6 +56,7 @@ public class PlayerSpell : NetworkBehaviour
         GameObject projectileInstance = Instantiate(qSpellObj, launchAt.position, Quaternion.LookRotation(dir));
         NetworkServer.Spawn(projectileInstance, connectionToClient);
         projectileInstance.GetComponent<Projectile>().SetStartPos(launchAt.position);
+        playerMovement.FreezePlayer(qSpellFreezeTime);
         canQSpell = false;
     }
 }
