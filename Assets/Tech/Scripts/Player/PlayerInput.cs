@@ -37,5 +37,15 @@ public class PlayerInput : MonoBehaviour
         {
             playerMovement.CmdStopMove();
         }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, floorMask);
+            Vector3 dir = (hit.point - transform.position).normalized;
+            dir.y = 0;
+            playerMovement.CmdDodge(dir);
+        }
+
     }
 }

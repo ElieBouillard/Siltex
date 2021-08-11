@@ -32,4 +32,10 @@ public class PlayerAnim : NetworkBehaviour
     {
         playerAnimator.SetTrigger("CastSpell");
     }
+
+    [ClientRpc]
+    public void CastDodgeAnim()
+    {
+        playerAnimator.SetTrigger("Dodge");
+    }
 }

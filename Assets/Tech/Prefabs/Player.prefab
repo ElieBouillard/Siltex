@@ -1215,7 +1215,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  playerAnim: {fileID: 5569631626073127683}
   m_agent: {fileID: 3044823272196742561}
+  dodgeDistance: 2
+  dodgeSpeed: 20
 --- !u!114 &5343298951122107123
 MonoBehaviour:
   m_ObjectHideFlags: 0
