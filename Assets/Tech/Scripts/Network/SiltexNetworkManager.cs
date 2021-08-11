@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Mirror;
 using System;
-using UnityEngine.SceneManagement;
-using UnityEngine.AI;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
 
 
 public class SiltexNetworkManager : NetworkManager
@@ -37,7 +35,7 @@ public class SiltexNetworkManager : NetworkManager
         Players.Clear();
         isGameInProgress = false;
     }
-
+               
     public void StartGame()
     {
         //if(Players.Count < 2) { return; }
@@ -58,6 +56,12 @@ public class SiltexNetworkManager : NetworkManager
         player.SetDisplayName($"Player {Players.Count}");
 
         player.SetPartyOwner(Players.Count == 1);
+    }
+
+    [Server]
+    public void ServerSetPlayerNameDisplay(NetworkConnection conn, string newPlayerName)
+    {
+        conn.identity.GetComponent<SiltexPlayer>().SetDisplayName(newPlayerName);
     }
     #endregion
 

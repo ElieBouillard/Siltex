@@ -45,6 +45,12 @@ public class SiltexPlayer : NetworkBehaviour
         ((SiltexNetworkManager)NetworkManager.singleton).StartGame();
     }
 
+    [Command]
+    public void CmdTryChangePlayerName(string newPlayerName)
+    {
+        ((SiltexNetworkManager)NetworkManager.singleton).ServerSetPlayerNameDisplay(connectionToClient, newPlayerName);
+    }
+
     #endregion
 
     #region Client
@@ -62,12 +68,14 @@ public class SiltexPlayer : NetworkBehaviour
 
     public override void OnStartClient()
     {
+        PlayerNameMenu.OnClientTryChangePlayerName += CmdTryChangePlayerName;
         if (NetworkServer.active) { return; }
         ((SiltexNetworkManager)NetworkManager.singleton).Players.Add(this);
     }
 
     public override void OnStopClient()
     {
+        PlayerNameMenu.OnClientTryChangePlayerName -= CmdTryChangePlayerName;
         ClientOnInfoUpdated?.Invoke();
         if (NetworkServer.active) { return; }
         ((SiltexNetworkManager)NetworkManager.singleton).Players.Remove(this);

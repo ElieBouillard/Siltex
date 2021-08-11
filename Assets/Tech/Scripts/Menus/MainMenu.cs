@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Steamworks;
+using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private GameObject landingPagePanel = null;
-
     [SerializeField] private bool useSteam = false;
 
     protected Callback<LobbyCreated_t> lobbyCreated;
