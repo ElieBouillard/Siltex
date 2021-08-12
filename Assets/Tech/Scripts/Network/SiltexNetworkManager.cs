@@ -14,6 +14,11 @@ public class SiltexNetworkManager : NetworkManager
 
     private bool isGameInProgress = false;
 
+    public bool GetIsGameInProgress()
+    {
+        return isGameInProgress;
+    }
+
     #region Server
 
     public override void OnServerConnect(NetworkConnection conn)
@@ -39,7 +44,6 @@ public class SiltexNetworkManager : NetworkManager
     public void StartGame()
     {
         //if(Players.Count < 2) { return; }
-
         isGameInProgress = true;
 
         ServerChangeScene("Scene_Map01");

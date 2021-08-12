@@ -12,25 +12,16 @@ public class PlayerSpell : NetworkBehaviour
     [SerializeField] private GameObject qSpellObj = null;
     [SerializeField] private GameObject qSpellOnFloorImage = null;
     [SerializeField] private SpriteRenderer qSpellOnFloorSpriteRenderer = null;
-    [SerializeField] private float qSpellCD = 0;
+    [SerializeField] private float qSpellCD = 0f;
     [SerializeField] private float qSpellCanalisationTime = 0.5f;
 
     [SyncVar]
     private bool canQSpell = true;
-    private float currQSpellCD = 0f;
+    [SyncVar]
+    public float currQSpellCD = 0f;
 
     private float currQSpellCanalisation = 0f;
     private Vector3? currQSpellDir = null;
-
-    public override void OnStartServer()
-    {
-        currQSpellCD = qSpellCD;        
-    }
-
-    public override void OnStartClient()
-    {
-        if (!hasAuthority) { qSpellOnFloorImage.SetActive(false); }
-    }
 
     private void Update()
     {
@@ -43,7 +34,6 @@ public class PlayerSpell : NetworkBehaviour
             else
             {
                 canQSpell = true;
-                currQSpellCD = qSpellCD;
             }
 
             if(currQSpellCanalisation > 0)
@@ -78,6 +68,7 @@ public class PlayerSpell : NetworkBehaviour
         currQSpellCanalisation = qSpellCanalisationTime - 0.75f;
         currQSpellDir = dir;
         transform.forward = currQSpellDir.Value;
+        currQSpellCD = qSpellCD;
         canQSpell = false;
     }
 
@@ -89,4 +80,16 @@ public class PlayerSpell : NetworkBehaviour
         projectileInstance.GetComponent<Projectile>().SetStartPos(launchAt.position);
         currQSpellDir = null;
     }
+
+    #region Client
+    public override void OnStartClient()
+    {
+        if (!hasAuthority) { qSpellOnFloorImage.SetActive(false); }
+    }
+
+    public float GetQSpellCouldown()
+    {
+        return qSpellCD;
+    }
+    #endregion
 }

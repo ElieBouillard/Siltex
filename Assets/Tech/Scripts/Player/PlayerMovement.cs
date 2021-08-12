@@ -9,8 +9,32 @@ public class PlayerMovement : NetworkBehaviour
 {
     [SerializeField] private PlayerAnim playerAnim;
     [SerializeField] private NavMeshAgent m_agent = null;
+    [SerializeField] private float dodgeCouldown = 3f;
     [SerializeField] private float dodgeDistance = 0f;
     [SerializeField] private float dodgeSpeed = 0f;
+
+    [HideInInspector]
+    [SyncVar]
+    public float dodgeCouldownTimer = 0f;
+    [SyncVar]
+    private bool canDodge = true;
+
+    private void Update()
+    {
+        if (!isServer) { return; }
+
+        if(dodgeCouldownTimer > 0)
+        {
+            dodgeCouldownTimer -= Time.deltaTime;
+        }
+        else if(dodgeCouldownTimer != -1)
+        {
+            canDodge = true;
+            dodgeCouldownTimer = -1;
+        }        
+    }
+
+    #region Server
 
     [Command]
     public void CmdTryMove(Vector3 pos)
@@ -23,15 +47,20 @@ public class PlayerMovement : NetworkBehaviour
     {
         m_agent.ResetPath();
     }
-
     [Command]
     public void CmdDodge(Vector3 dir)
     {
-        m_agent.ResetPath();
-        playerAnim.CastDodgeAnim();
-        Vector3 targetPos = transform.position + dir * dodgeDistance;
-        m_agent.SetDestination(targetPos);
-        m_agent.speed = dodgeSpeed;
+        if (canDodge)
+        {
+            m_agent.ResetPath();
+            playerAnim.CastDodgeAnim();
+
+            Vector3 targetPos = transform.position + dir * dodgeDistance;
+            m_agent.SetDestination(targetPos);
+            m_agent.speed = dodgeSpeed;
+            canDodge = false;
+            dodgeCouldownTimer = dodgeCouldown;
+        }
     }
 
     [Server]
@@ -53,4 +82,12 @@ public class PlayerMovement : NetworkBehaviour
     {
         m_agent.isStopped = false;
     }
+    #endregion
+
+    #region Client
+    public float GetDodgeCouldown()
+    {
+        return dodgeCouldown;
+    }
+    #endregion
 }
