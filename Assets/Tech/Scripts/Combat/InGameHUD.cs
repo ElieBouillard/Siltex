@@ -15,7 +15,8 @@ public class InGameHUD : NetworkBehaviour
     private PlayerMovement playerMovement;
     private PlayerSpell playerSpell;
 
-    private float progressImageVelocity;
+    [SerializeField]
+    private float speedSpellCdImageFill;
 
     [ClientCallback]
     private void Start()
@@ -35,16 +36,27 @@ public class InGameHUD : NetworkBehaviour
     [ClientCallback]
     private void UpdateSpellsCouldown(Image spellCdImg, float spellCdTimer, float spellCd) 
     {
-        float newProgress = spellCdTimer / spellCd;
+        float smoothProgress = Mathf.Lerp(spellCdImg.fillAmount, spellCdTimer/spellCd, Time.deltaTime * speedSpellCdImageFill);
 
-        if (newProgress < spellCdImg.fillAmount)
+        if(smoothProgress < spellCdImg.fillAmount)
         {
-            spellCdImg.fillAmount = Mathf.SmoothDamp(spellCdImg.fillAmount, newProgress, ref progressImageVelocity, 0.1f);
+            spellCdImg.fillAmount = smoothProgress;
         }
         else
         {
-            spellCdImg.fillAmount = newProgress;
-
+            spellCdImg.fillAmount = spellCdTimer / spellCd;
         }
+
+        //float newProgress = spellCdTimer / spellCd;
+        //spellCdImg.fillAmount = newProgress;
+
+        //if (newProgress < spellCdImg.fillAmount)
+        //{
+        //    spellCdImg.fillAmount = Mathf.SmoothDamp(spellCdImg.fillAmount, newProgress, ref progressImageVelocity, 0.13f);
+        //}
+        //else
+        //{
+            
+        //}
     }
 }

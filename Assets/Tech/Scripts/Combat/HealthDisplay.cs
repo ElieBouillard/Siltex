@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Mirror;
 
-public class HealthDisplay : MonoBehaviour
+public class HealthDisplay : NetworkBehaviour
 {
     [SerializeField] private Health health = null;
     [SerializeField] private Image healthBarImage = null;
+    [SerializeField] private bool onPlayerObject = false;
 
-    private void Awake()
+    private void Start()
     {
+        if (!onPlayerObject) 
+        {
+            health = NetworkClient.localPlayer.gameObject.GetComponent<Health>();
+        }
         health.ClientOnHealthUpdated += HandleHealthUpdated;
     }
 

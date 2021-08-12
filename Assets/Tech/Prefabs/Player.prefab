@@ -1216,7 +1216,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   playerAgent: {fileID: 3044823272196742561}
-  playerHud: {fileID: 0}
   playerInput: {fileID: 5343298951122107123}
   playerSpell: {fileID: 6760067484786919538}
 --- !u!114 &5343298951122107123
@@ -1311,6 +1310,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: {fileID: 696258211623884028}
   healthBarImage: {fileID: 6868242582520728606}
+  onPlayerObject: 1
 --- !u!114 &5569631626073127683
 MonoBehaviour:
   m_ObjectHideFlags: 0

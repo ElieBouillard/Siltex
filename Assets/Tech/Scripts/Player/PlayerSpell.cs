@@ -11,7 +11,6 @@ public class PlayerSpell : NetworkBehaviour
     [SerializeField] private Transform launchAt = null;
     [SerializeField] private GameObject qSpellObj = null;
     [SerializeField] private GameObject qSpellOnFloorImage = null;
-    [SerializeField] private SpriteRenderer qSpellOnFloorSpriteRenderer = null;
     [SerializeField] private float qSpellCD = 0f;
     [SerializeField] private float qSpellCanalisationTime = 0.5f;
 
@@ -54,8 +53,7 @@ public class PlayerSpell : NetworkBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, floorMask);
         Vector3 mousePos = new Vector3(hit.point.x, transform.position.y, hit.point.z);
-        qSpellOnFloorImage.transform.forward = (mousePos - transform.position).normalized;
-        qSpellOnFloorSpriteRenderer.color = (canQSpell) ? Color.green : Color.red;
+        qSpellOnFloorImage.transform.forward = (mousePos - transform.position).normalized;;
     }
 
     [Command]
