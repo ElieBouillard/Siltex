@@ -198,17 +198,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 271194582}
   m_CullTransparentMesh: 1
---- !u!114 &309558457 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4364514416254252668, guid: 43aeeea300bc54049b3702d7102632b1, type: 3}
-  m_PrefabInstance: {fileID: 891145912}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &313691064
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,7 +735,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 779021240094936496, guid: 43aeeea300bc54049b3702d7102632b1, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1347038778884116485, guid: 43aeeea300bc54049b3702d7102632b1, type: 3}
       propertyPath: mainMenu
@@ -755,7 +744,7 @@ PrefabInstance:
     - target: {fileID: 1347038778884116485, guid: 43aeeea300bc54049b3702d7102632b1, type: 3}
       propertyPath: transport
       value: 
-      objectReference: {fileID: 309558457}
+      objectReference: {fileID: 891145913}
     - target: {fileID: 1347038778884116485, guid: 43aeeea300bc54049b3702d7102632b1, type: 3}
       propertyPath: offlineScene
       value: Assets/Tech/Scenes/MainMenu.unity
@@ -770,7 +759,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4364514416254252668, guid: 43aeeea300bc54049b3702d7102632b1, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4946252418946666611, guid: 43aeeea300bc54049b3702d7102632b1, type: 3}
       propertyPath: m_RootOrder
@@ -822,10 +811,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6582170036651484526, guid: 43aeeea300bc54049b3702d7102632b1, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43aeeea300bc54049b3702d7102632b1, type: 3}
+--- !u!114 &891145913 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 779021240094936496, guid: 43aeeea300bc54049b3702d7102632b1, type: 3}
+  m_PrefabInstance: {fileID: 891145912}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea368fb6f27ec2f40a40e20977992b9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &929586779
 GameObject:
   m_ObjectHideFlags: 0
@@ -1834,7 +1834,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   landingPagePanel: {fileID: 5417992697653458390}
-  useSteam: 0
+  useSteam: 1
 --- !u!4 &5417992697325957511
 Transform:
   m_ObjectHideFlags: 0
