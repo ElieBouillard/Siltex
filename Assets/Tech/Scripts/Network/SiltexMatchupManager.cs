@@ -91,6 +91,7 @@ public class SiltexMatchupManager : NetworkBehaviour
             for (int i = 0; i < playersToMatch.Count; i++)
             {
                 Match1.Add(playersToMatch[i]);
+                playersToMatch[i].ClientSetCameraPosition(1);
             }
         }
         else
@@ -117,15 +118,16 @@ public class SiltexMatchupManager : NetworkBehaviour
         for (int i = 0; i < Match1.Count; i++)
         {
             Match1[i].ServerSetPlayerPos(((SiltexNetworkManager)NetworkManager.singleton).GetStartPosition().position);
+            SetPlayerCamera(Match1[i].connectionToClient, 1);
         }
 
         for (int i = 0; i < Match2.Count; i++)
         {
             Match2[i].ServerSetPlayerPos(((SiltexNetworkManager)NetworkManager.singleton).GetStartPosition().position);
+            SetPlayerCamera(Match2[i].connectionToClient, 2);
         }
 
         ClientSetMatckmakingHud(Match1, Match2);
-        ClientSetCameraPosition();
         couldownShowMatchmakingHud = 5f;
     }
 
@@ -134,16 +136,23 @@ public class SiltexMatchupManager : NetworkBehaviour
     {
         for (int i = 0; i < playersInGame.Count; i++)
         {
-            playersInGame[i].ServerStartGame();
+            playersInGame[i].ServerStartMatch();
         }
     }
     #endregion
 
     #region Client
-    [ClientRpc]
-    public void ClientStartMatch()
+
+    [TargetRpc]
+    private void SetPlayerCamera(NetworkConnection conn, int matchIndex)
     {
-        NetworkClient.localPlayer.gameObject.GetComponent<SiltexPlayer>().ClienOnStartMatch();
+        conn.identity.GetComponent<SiltexPlayer>().ClientSetCameraPosition(matchIndex);
+    }
+
+    [ClientRpc]
+    private void ClientStartMatch()
+    {
+        NetworkClient.localPlayer.gameObject.GetComponent<SiltexPlayer>().ClientOnStartMatch();
     }
 
     [ClientRpc]
@@ -179,13 +188,6 @@ public class SiltexMatchupManager : NetworkBehaviour
                 currNames[i + match2.Count].text = match2[i].GetDisplayName();
             }
         }
-    }
-
-    [ClientRpc]
-    private void ClientSetCameraPosition()
-    {
-        SiltexPlayer currPlayer = NetworkClient.localPlayer.gameObject.GetComponent<SiltexPlayer>();
-        currPlayer.ClientSetCameraPosition();
     }
 
     [ClientRpc]

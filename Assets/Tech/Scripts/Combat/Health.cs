@@ -7,8 +7,10 @@ using Mirror;
 public class Health : NetworkBehaviour
 {
     [SerializeField] private int InitialHeatlh = 0;
-    [SerializeField] private SiltexPlayer m_siltexPlayer;
+    [SerializeField] private Renderer playerRenderer;
 
+    private SiltexPlayer m_siltexPlayer;
+    
     public event Action<int, int> ClientOnHealthUpdated;
 
     [SyncVar(hook =nameof(HookClientOnHealthUpdated))]
@@ -32,10 +34,24 @@ public class Health : NetworkBehaviour
     public void DealDamage(int value)
     {
         currHealth -= value;
+        ClientTakeDamageFeedBack();
 
         if(currHealth > 0) { return; }
 
         m_siltexPlayer.ServerSetPlayerDeath(true);
+    }
+
+    [ClientRpc]
+    private void ClientTakeDamageFeedBack()
+    {
+        playerRenderer.material.SetColor("_BaseColor", Color.red);
+        Invoke(nameof(ReinitiatePlayerColor), 0.2f);
+    }
+
+    [ClientRpc]
+    private void ReinitiatePlayerColor()
+    {
+        playerRenderer.material.SetColor("_BaseColor", Color.white);
     }
 
     private void HookClientOnHealthUpdated(int oldHealth, int newHealth)

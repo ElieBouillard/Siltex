@@ -11,6 +11,16 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] private bool cameraLock = false;
 
+    private void Start()
+    {
+        SiltexPlayer.ClientSetCamera += SetPlayerCameraPosition;
+    }
+
+    private void OnDestroy()
+    {
+        SiltexPlayer.ClientSetCamera -= SetPlayerCameraPosition;        
+    }
+
     private void Update()
     {
         if (!Application.isFocused) { return; }
@@ -47,5 +57,17 @@ public class CameraController : MonoBehaviour
         //pos.z = Mathf.Clamp(pos.z, screenZLimits.x + transform.position.z, screenZLimits.y + transform.position.z);
 
         transform.position = pos;
+    }
+
+    private void SetPlayerCameraPosition(int matchIndex)
+    {
+        if(matchIndex == 1)
+        {
+            gameObject.transform.position = new Vector3(-12.5f, 13f, -22.5f);
+        }
+        else if( matchIndex == 2)
+        {
+            gameObject.transform.position = new Vector3(12.5f, 13f, 2.5f);
+        }
     }
 }

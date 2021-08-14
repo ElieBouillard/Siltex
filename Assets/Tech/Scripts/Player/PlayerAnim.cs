@@ -22,6 +22,12 @@ public class PlayerAnim : NetworkBehaviour
     }
 
     [ClientRpc]
+    public void CastDeath()
+    {
+        playerAnimator.SetTrigger("Death");
+    }
+
+    [ClientRpc]
     private void SetRun(bool state)
     {
         playerAnimator.SetBool("Run", state);

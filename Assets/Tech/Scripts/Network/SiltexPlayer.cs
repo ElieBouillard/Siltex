@@ -7,6 +7,8 @@ using System;
 
 public class SiltexPlayer : NetworkBehaviour
 {
+    [SerializeField] private GameObject playerParent = null;
+    [SerializeField] private PlayerAnim playerAnim = null;
     [SerializeField] private NavMeshAgent playerAgent = null;
     [SerializeField] private PlayerInput playerInput = null;
     [SerializeField] private PlayerSpell playerSpell = null;
@@ -21,7 +23,7 @@ public class SiltexPlayer : NetworkBehaviour
 
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
     public static event Action ClientOnInfoUpdated;
-    public static event Action<Vector3> ClientStartMatch;
+    public static event Action<int> ClientSetCamera;
 
     public string GetDisplayName()
     {
@@ -31,6 +33,11 @@ public class SiltexPlayer : NetworkBehaviour
     public bool GetIsPartyOwner()
     {
         return isPartyOwner;
+    }
+
+    public bool GetIsPlayerDead()
+    {
+        return isDead;
     }
 
     #region Server
@@ -51,6 +58,12 @@ public class SiltexPlayer : NetworkBehaviour
     public void ServerSetPlayerDeath(bool state)
     {
         isDead = state;
+        if(state == true)
+        {
+            playerAnim.CastDeath();
+            ClientOnDie(connectionToClient);
+            Invoke(nameof(HideCharacterWhenDead), 2f);
+        }
     }
 
     [Server]
@@ -79,7 +92,7 @@ public class SiltexPlayer : NetworkBehaviour
     }
 
     [Server]
-    public void ServerStartGame()
+    public void ServerStartMatch()
     {
         playerAgent.enabled = true;
         playerInput.enabled = true;
@@ -117,7 +130,7 @@ public class SiltexPlayer : NetworkBehaviour
     }
 
     [Client]
-    public void ClienOnStartMatch()
+    public void ClientOnStartMatch()
     {
         playerAgent.enabled = true;
         playerInput.enabled = true;
@@ -125,9 +138,23 @@ public class SiltexPlayer : NetworkBehaviour
     }
 
     [Client]
-    public void ClientSetCameraPosition()
+    public void ClientSetCameraPosition(int matchIndex)
     {
-        ClientStartMatch?.Invoke(transform.position);
+        ClientSetCamera?.Invoke(matchIndex);
+    }
+
+    [ClientRpc]
+    private void HideCharacterWhenDead()
+    {
+        playerParent.SetActive(false);
+    }
+
+    [TargetRpc]
+    private void ClientOnDie(NetworkConnection conn)
+    {
+        playerAgent.enabled = false;
+        playerInput.enabled = false;
+        playerSpell.enabled = false;
     }
     #endregion
 }

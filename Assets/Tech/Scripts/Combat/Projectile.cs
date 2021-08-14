@@ -40,7 +40,10 @@ public class Projectile : NetworkBehaviour
 
         if(other.TryGetComponent<Health>(out Health health))
         {
-            health.DealDamage(damage);
+            if (!connectionToClient.identity.gameObject.GetComponent<SiltexPlayer>().GetIsPlayerDead())
+            {
+                health.DealDamage(damage);
+            }
         }
 
         SelfDestroy();
