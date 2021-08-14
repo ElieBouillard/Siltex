@@ -42,8 +42,8 @@ public class CameraController : MonoBehaviour
 
         pos += cursorMovement.normalized * speed * Time.deltaTime;
 
-        pos.x = Mathf.Clamp(pos.x, screenXLimits.x, screenXLimits.y);
-        pos.z = Mathf.Clamp(pos.z, screenZLimits.x, screenZLimits.y);
+        pos.x = Mathf.Clamp(pos.x, screenXLimits.x + transform.position.x, screenXLimits.y + transform.position.x);
+        pos.z = Mathf.Clamp(pos.z, screenZLimits.x + transform.position.z, screenZLimits.y + transform.position.z);
 
         transform.position = pos;
     }

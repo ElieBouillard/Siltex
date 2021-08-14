@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 
 public class SiltexNetworkManager : NetworkManager
@@ -10,7 +11,8 @@ public class SiltexNetworkManager : NetworkManager
     public static event Action ClientOnConnected; 
     public static event Action ClientOnDisconnected;
 
-    public List<SiltexPlayer> Players { get; } = new List<SiltexPlayer>();
+    [SerializeField]
+    public List<SiltexPlayer> Players = new List<SiltexPlayer>();
 
     private bool isGameInProgress = false;
 
@@ -45,12 +47,12 @@ public class SiltexNetworkManager : NetworkManager
     {
         //if(Players.Count < 2) { return; }
         isGameInProgress = true;
-
         ServerChangeScene("Scene_Map01");
     }
 
     public override void OnServerAddPlayer(NetworkConnection conn)
     {
+        if (SceneManager.GetActiveScene().name.StartsWith("Scene_Map")) { return; }
         base.OnServerAddPlayer(conn);
 
         SiltexPlayer player = conn.identity.GetComponent<SiltexPlayer>();
@@ -61,6 +63,7 @@ public class SiltexNetworkManager : NetworkManager
 
         player.SetPartyOwner(Players.Count == 1);
     }
+
 
     [Server]
     public void ServerSetPlayerNameDisplay(NetworkConnection conn, string newPlayerName)

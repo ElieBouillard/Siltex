@@ -11,6 +11,11 @@ public class FaceCamera : MonoBehaviour
         mainCameraTransform = Camera.main.transform;
     }
 
+    private void Update()
+    {
+        if(mainCameraTransform == null) { mainCameraTransform = Camera.main.transform; }
+    }
+
     private void LateUpdate()
     {
         transform.LookAt(

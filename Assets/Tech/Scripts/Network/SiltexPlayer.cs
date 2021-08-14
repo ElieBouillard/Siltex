@@ -17,10 +17,6 @@ public class SiltexPlayer : NetworkBehaviour
     [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))]
     private string displayName = null;
 
-    [SyncVar]
-    private bool isGameStarted = false;
-    private bool startGameCheck = false;
-
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
     public static event Action ClientOnInfoUpdated;
 
@@ -34,23 +30,13 @@ public class SiltexPlayer : NetworkBehaviour
         return isPartyOwner;
     }
 
-    private void Update()
+    #region Server
+
+    public override void OnStartServer()
     {
-        if (isClient)
-        {
-            if (!isGameStarted)
-            {
-                isGameStarted = ((SiltexNetworkManager)NetworkManager.singleton).GetIsGameInProgress();
-            }
-            else if(!startGameCheck)
-            {
-                ClienOnStartGame();
-                startGameCheck = true;
-            }
-        }
+        DontDestroyOnLoad(this);
     }
 
-    #region Server
     [Server]
     public void SetDisplayName(string newName)
     {
@@ -93,6 +79,7 @@ public class SiltexPlayer : NetworkBehaviour
 
     public override void OnStartClient()
     {
+        DontDestroyOnLoad(this);
         PlayerNameMenu.OnClientTryChangePlayerName += CmdTryChangePlayerName;
         if (NetworkServer.active) { return; }
         ((SiltexNetworkManager)NetworkManager.singleton).Players.Add(this);
@@ -106,7 +93,7 @@ public class SiltexPlayer : NetworkBehaviour
         ((SiltexNetworkManager)NetworkManager.singleton).Players.Remove(this);
     }
 
-    private void ClienOnStartGame()
+    private void ClienOnStartMatch()
     {
         playerAgent.enabled = true;
         playerInput.enabled = true;
