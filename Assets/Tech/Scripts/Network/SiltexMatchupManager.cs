@@ -12,25 +12,31 @@ public class SiltexMatchupManager : NetworkBehaviour
     [SerializeField] private List<TMP_Text> finalsPlayerNameTxts = new List<TMP_Text>();
     [SerializeField] private TMP_Text WinnerPlayerNameTxts = null;
 
+    private List<SiltexPlayer> playersInGame = new List<SiltexPlayer>();
     private List<SiltexPlayer> playersToMatch = new List<SiltexPlayer>();
     private List<SiltexPlayer> Match1 = new List<SiltexPlayer>();
     private List<SiltexPlayer> Match2 = new List<SiltexPlayer>();
 
     [SyncVar]
-    public float couldownMatchmaking;
-    private bool canCouldownMatchmaking;
+    public float couldownMatchmaking = -1f;
+
+    [SyncVar]
+    public float couldownStartMatch = -1f;
+
+    [SyncVar]
+    public float couldownShowMatchmakingHud = -1f;
     #region Server
 
     public override void OnStartServer()
     {
-        canCouldownMatchmaking = true;
-        couldownMatchmaking = 5f;
+        playersInGame = ((SiltexNetworkManager)NetworkManager.singleton).Players;
+        couldownMatchmaking = 2f;
     }
 
     [ServerCallback]
     private void Update()
     {
-        if (canCouldownMatchmaking)
+        if (couldownMatchmaking != -1)
         {
             if (couldownMatchmaking > 0)
             {
@@ -39,7 +45,35 @@ public class SiltexMatchupManager : NetworkBehaviour
             else
             {
                 SetMatchmaking();
-                canCouldownMatchmaking = false;
+                couldownMatchmaking = -1;
+            }
+        }
+
+        if(couldownShowMatchmakingHud != -1)
+        {
+            if(couldownShowMatchmakingHud > 0)
+            {
+                couldownShowMatchmakingHud -= Time.deltaTime;
+            }
+            else
+            {
+                SetClientMatchmakingHud(false);
+                couldownStartMatch = 3f;
+                couldownShowMatchmakingHud = -1;
+            }
+        }
+
+        if (couldownStartMatch != -1)
+        {
+            if(couldownStartMatch > 0)
+            {
+                couldownStartMatch -= Time.deltaTime;
+            }
+            else
+            {
+                ServerStartMatch();
+                ClientStartMatch();
+                couldownStartMatch = -1;
             }
         }
     }
@@ -47,10 +81,12 @@ public class SiltexMatchupManager : NetworkBehaviour
     [Server]
     private void SetMatchmaking()
     {
-        playersToMatch = ((SiltexNetworkManager)NetworkManager.singleton).Players;
-        int playersCount = playersToMatch.Count;
+        for (int i = 0; i < playersInGame.Count; i++)
+        {
+            playersToMatch.Add(playersInGame[i]);
+        }
 
-        if (playersCount <= 2)
+        if (playersToMatch.Count <= 2)
         {
             for (int i = 0; i < playersToMatch.Count; i++)
             {
@@ -77,35 +113,85 @@ public class SiltexMatchupManager : NetworkBehaviour
             }
         }
 
+
+        for (int i = 0; i < Match1.Count; i++)
+        {
+            Match1[i].ServerSetPlayerPos(((SiltexNetworkManager)NetworkManager.singleton).GetStartPosition().position);
+        }
+
+        for (int i = 0; i < Match2.Count; i++)
+        {
+            Match2[i].ServerSetPlayerPos(((SiltexNetworkManager)NetworkManager.singleton).GetStartPosition().position);
+        }
+
         ClientSetMatckmakingHud(Match1, Match2);
+        ClientSetCameraPosition();
+        couldownShowMatchmakingHud = 5f;
     }
 
     [Server]
-    public void StartMatch()
+    private void ServerStartMatch()
     {
-        matchupHud.SetActive(false);
+        for (int i = 0; i < playersInGame.Count; i++)
+        {
+            playersInGame[i].ServerStartGame();
+        }
     }
-
     #endregion
 
     #region Client
     [ClientRpc]
-    private void ClientSetMatckmakingHud(List<SiltexPlayer>match1, List<SiltexPlayer> match2)
+    public void ClientStartMatch()
     {
-        List<TMP_Text> currNames = semiFinalsPlayerNameTxts;
-        for (int i = 0; i < match1.Count; i++)
+        NetworkClient.localPlayer.gameObject.GetComponent<SiltexPlayer>().ClienOnStartMatch();
+    }
+
+    [ClientRpc]
+    private void ClientSetMatckmakingHud(List<SiltexPlayer> match1, List<SiltexPlayer> match2)
+    {
+        int playerCount = match1.Count + match2.Count;
+        
+        if(playerCount == 1)
         {
-            currNames[i].text = match1[i].GetDisplayName();
+            TMP_Text currName = WinnerPlayerNameTxts;
+            currName.text = match1[0].GetDisplayName();
         }
-
-        if (match2 == null) { return; }
-
-        for (int i = 0; i < match2.Count; i++)
+        else if(playerCount <= 2)
         {
-            currNames[i + match2.Count].text = match2[i].GetDisplayName();
+            List<TMP_Text> currNames = finalsPlayerNameTxts;
+            for (int i = 0; i < match1.Count; i++)
+            {
+                currNames[i].text = match1[i].GetDisplayName();
+            }
+        }
+        else
+        {
+            List<TMP_Text> currNames = semiFinalsPlayerNameTxts;
+            for (int i = 0; i < match1.Count; i++)
+            {
+                currNames[i].text = match1[i].GetDisplayName();
+            }
+
+            if (match2.Count <= 0) { return; }
+
+            for (int i = 0; i < match2.Count; i++)
+            {
+                currNames[i + match2.Count].text = match2[i].GetDisplayName();
+            }
         }
     }
 
+    [ClientRpc]
+    private void ClientSetCameraPosition()
+    {
+        SiltexPlayer currPlayer = NetworkClient.localPlayer.gameObject.GetComponent<SiltexPlayer>();
+        currPlayer.ClientSetCameraPosition();
+    }
 
+    [ClientRpc]
+    private void SetClientMatchmakingHud(bool value)
+    {
+        matchupHud.SetActive(false);
+    }
     #endregion
 }

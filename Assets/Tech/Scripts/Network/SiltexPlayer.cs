@@ -17,8 +17,11 @@ public class SiltexPlayer : NetworkBehaviour
     [SyncVar(hook = nameof(ClientHandleDisplayNameUpdated))]
     private string displayName = null;
 
+    private bool isDead = false;
+
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
     public static event Action ClientOnInfoUpdated;
+    public static event Action<Vector3> ClientStartMatch;
 
     public string GetDisplayName()
     {
@@ -35,6 +38,19 @@ public class SiltexPlayer : NetworkBehaviour
     public override void OnStartServer()
     {
         DontDestroyOnLoad(this);
+    }
+
+    [Server]
+    public void ServerSetPlayerPos(Vector3 targetPos)
+    {
+        if(targetPos == null) { return; }
+        transform.position = targetPos;
+    }
+
+    [Server]
+    public void ServerSetPlayerDeath(bool state)
+    {
+        isDead = state;
     }
 
     [Server]
@@ -62,6 +78,13 @@ public class SiltexPlayer : NetworkBehaviour
         ((SiltexNetworkManager)NetworkManager.singleton).ServerSetPlayerNameDisplay(connectionToClient, newPlayerName);
     }
 
+    [Server]
+    public void ServerStartGame()
+    {
+        playerAgent.enabled = true;
+        playerInput.enabled = true;
+        playerSpell.enabled = true;
+    }
     #endregion
 
     #region Client
@@ -93,12 +116,18 @@ public class SiltexPlayer : NetworkBehaviour
         ((SiltexNetworkManager)NetworkManager.singleton).Players.Remove(this);
     }
 
-    private void ClienOnStartMatch()
+    [Client]
+    public void ClienOnStartMatch()
     {
         playerAgent.enabled = true;
         playerInput.enabled = true;
         playerSpell.enabled = true;
     }
 
+    [Client]
+    public void ClientSetCameraPosition()
+    {
+        ClientStartMatch?.Invoke(transform.position);
+    }
     #endregion
 }

@@ -10,8 +10,6 @@ public class SiltexNetworkManager : NetworkManager
 {
     public static event Action ClientOnConnected; 
     public static event Action ClientOnDisconnected;
-
-    [SerializeField]
     public List<SiltexPlayer> Players = new List<SiltexPlayer>();
 
     private bool isGameInProgress = false;

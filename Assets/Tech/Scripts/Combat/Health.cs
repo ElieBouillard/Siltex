@@ -7,6 +7,7 @@ using Mirror;
 public class Health : NetworkBehaviour
 {
     [SerializeField] private int InitialHeatlh = 0;
+    [SerializeField] private SiltexPlayer m_siltexPlayer;
 
     public event Action<int, int> ClientOnHealthUpdated;
 
@@ -15,13 +16,26 @@ public class Health : NetworkBehaviour
 
     private void Start()
     {
-        currHealth = InitialHeatlh;
+        if (isClient) 
+        {
+            currHealth = InitialHeatlh;
+        }
+
+        if (isServer)
+        {
+            m_siltexPlayer = this.gameObject.GetComponent<SiltexPlayer>();
+        }
+
     }
 
     [Server]
     public void DealDamage(int value)
     {
         currHealth -= value;
+
+        if(currHealth > 0) { return; }
+
+        m_siltexPlayer.ServerSetPlayerDeath(true);
     }
 
     private void HookClientOnHealthUpdated(int oldHealth, int newHealth)
