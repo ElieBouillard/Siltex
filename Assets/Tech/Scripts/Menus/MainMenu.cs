@@ -19,16 +19,23 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
-        if(((SiltexNetworkManager)NetworkManager.singleton).GetIsGameInProgress())
-        {
-            landingPagePanel.SetActive(false);
-            lobbyUiPanel.SetActive(true);
-        }
+        SiltexPlayer.ClientOnPlayerConnectedToServer += EnableLobbyUi;
         if (!useSteam) { return; }
 
         lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
         gameLobbyJoinRequested = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
         lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
+    }
+
+    private void OnDisable()
+    {
+        SiltexPlayer.ClientOnPlayerConnectedToServer -= EnableLobbyUi;
+    }
+
+    public void EnableLobbyUi()
+    {
+        landingPagePanel.SetActive(false);
+        lobbyUiPanel.SetActive(true);
     }
 
     public void HostLobby()

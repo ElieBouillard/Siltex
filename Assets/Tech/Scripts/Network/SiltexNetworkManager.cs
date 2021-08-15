@@ -60,6 +60,8 @@ public class SiltexNetworkManager : NetworkManager
         player.SetDisplayName($"Player {Players.Count}");
 
         player.SetPartyOwner(Players.Count == 1);
+
+        player.ServerJoinedByPlayer();
     }
 
     [Server]
@@ -81,7 +83,6 @@ public class SiltexNetworkManager : NetworkManager
     #endregion
 
     #region Client
-
     public override void OnClientConnect(NetworkConnection conn)
     {
         base.OnClientConnect(conn);

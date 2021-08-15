@@ -27,6 +27,8 @@ public class SiltexPlayer : NetworkBehaviour
     public static event Action<int> ClientSetCamera;
     public static event Action<SiltexPlayer> ServerOnPlayerDeath;
 
+    public static event Action ClientOnPlayerConnectedToServer;
+
     public string GetDisplayName()
     {
         return displayName;
@@ -88,6 +90,12 @@ public class SiltexPlayer : NetworkBehaviour
     public void SetPartyOwner(bool state)
     {
         isPartyOwner = state;
+    }
+
+    [Server]
+    public void ServerJoinedByPlayer()
+    {
+        OnClientJoinedServer(connectionToClient);
     }
 
     [Command]
@@ -177,6 +185,12 @@ public class SiltexPlayer : NetworkBehaviour
         playerInput.enabled = value;
         playerSpell.enabled = value;
         playerCollider.enabled = value;
+    }
+
+    [TargetRpc]
+    private void OnClientJoinedServer(NetworkConnection conn)
+    {
+        ClientOnPlayerConnectedToServer?.Invoke();
     }
     #endregion
 }
