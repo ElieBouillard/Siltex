@@ -8,6 +8,7 @@ using TMPro;
 public class MainMenu : MonoBehaviour
 {
     [SerializeField] private GameObject landingPagePanel = null;
+    [SerializeField] private GameObject lobbyUiPanel = null;
     [SerializeField] private bool useSteam = false;
 
     protected Callback<LobbyCreated_t> lobbyCreated;
@@ -18,6 +19,11 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
+        if(((SiltexNetworkManager)NetworkManager.singleton).GetIsGameInProgress())
+        {
+            landingPagePanel.SetActive(false);
+            lobbyUiPanel.SetActive(true);
+        }
         if (!useSteam) { return; }
 
         lobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);

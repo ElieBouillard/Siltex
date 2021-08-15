@@ -13,6 +13,7 @@ public class SiltexMatchupManagerV2 : NetworkBehaviour
     [SerializeField] private List<TMP_Text> semiFinalsPlayerNameTxts = new List<TMP_Text>();
     [SerializeField] private List<TMP_Text> finalsPlayerNameTxts = new List<TMP_Text>();
     [SerializeField] private List<TMP_Text> winnerPlayerNameTxts = null;
+    [SerializeField] private TMP_Text startGameCounterTxt = null;
 
     public enum MatchmakingState { SetMatchmaking, SemiFinal, Final, Winner }
     [SerializeField]
@@ -40,7 +41,16 @@ public class SiltexMatchupManagerV2 : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        playersInGame = ((SiltexNetworkManager)NetworkManager.singleton).Players;
+        for (int i = 0; i < ((SiltexNetworkManager)NetworkManager.singleton).Players.Count; i++)
+        {
+            playersInGame.Add(((SiltexNetworkManager)NetworkManager.singleton).Players[i]);
+        }
+
+        for (int i = 0; i < playersInGame.Count; i++)
+        {
+            playersInGame[i].ServerSetPlayerDeath(false);
+        }
+
         SiltexPlayer.ServerOnPlayerDeath += ServerOnPlayerDeath;
 
         if (!DisableMatchMaking)
@@ -60,78 +70,101 @@ public class SiltexMatchupManagerV2 : NetworkBehaviour
         SiltexPlayer.ServerOnPlayerDeath -= ServerOnPlayerDeath;
     }
 
-    [ServerCallback]
     private void Update()
     {
-        if (couldownMatchmaking != -1)
+        if (isServer)
         {
-            if (couldownMatchmaking > 0)
+            if (couldownMatchmaking != -1)
             {
-                couldownMatchmaking -= Time.deltaTime;
-            }
-            else
-            {
-                SetMatchmaking();
-                couldownMatchmaking = -1;
-            }
-        }
-
-        if (couldownHideMatchmakingHud != -1)
-        {
-            if (couldownHideMatchmakingHud > 0)
-            {
-                couldownHideMatchmakingHud -= Time.deltaTime;
-            }
-            else
-            {
-                ClientShowMatchmakingHud(false);
-                couldownStartMatch = 3f;
-                couldownHideMatchmakingHud = -1;
-            }
-        }
-
-        if (couldownStartMatch != -1)
-        {
-            if (couldownStartMatch > 0)
-            {
-                couldownStartMatch -= Time.deltaTime;
-            }
-            else
-            {
-                ServerStartMatch(true);
-                ClientStartMatch(true);
-                couldownStartMatch = -1;
-            }
-        }
-
-        if (m_matchmakingState == MatchmakingState.SemiFinal)
-        {
-            int MatchEnded = 0;
-            for (int i = 0; i < matchs.Count; i++)
-            {
-                if (matchs[i].GetMatchEnded())
+                if (couldownMatchmaking > 0)
                 {
-                    MatchEnded++;
+                    couldownMatchmaking -= Time.deltaTime;
+                }
+                else
+                {
+                    SetMatchmaking();
+                    couldownMatchmaking = -1;
                 }
             }
-            if (MatchEnded == 2)
+
+            if (couldownHideMatchmakingHud != -1)
             {
-                m_matchmakingState = MatchmakingState.SetMatchmaking;
-                SetMatchmaking();
+                if (couldownHideMatchmakingHud > 0)
+                {
+                    couldownHideMatchmakingHud -= Time.deltaTime;
+                }
+                else
+                {
+                    ClientShowMatchmakingHud(false);
+                    couldownStartMatch = 3f;
+                    couldownHideMatchmakingHud = -1;
+                }
+            }
+
+            if (couldownStartMatch != -1)
+            {
+                if (couldownStartMatch > 0)
+                {
+                    couldownStartMatch -= Time.deltaTime;
+                }
+                else
+                {
+                    ServerStartMatch(true);
+                    ClientStartMatch(true);
+                    couldownStartMatch = -1;
+                }
+            }
+
+            if (m_matchmakingState == MatchmakingState.SemiFinal)
+            {
+                int MatchEnded = 0;
+                for (int i = 0; i < matchs.Count; i++)
+                {
+                    if (matchs[i].GetMatchEnded())
+                    {
+                        MatchEnded++;
+                    }
+                }
+                if (MatchEnded == 2)
+                {
+                    m_matchmakingState = MatchmakingState.SetMatchmaking;
+                    SetMatchmaking();
+                }
+            }
+            else if (m_matchmakingState == MatchmakingState.Final)
+            {
+                if (matchs[0].GetMatchEnded())
+                {
+                    matchs.Clear();
+                    MatchBehaviour match = new MatchBehaviour();
+                    matchs.Add(match);
+                    match.AddPlayerToMatch(playersInGame[0]);
+                    ClientShowMatchmakingHud(true);
+                    ServerSendMatchMakingHudToClient();
+                }
             }
         }
-        else if (m_matchmakingState == MatchmakingState.Final)
+
+        if (isClient)
         {
-            if (matchs[0].GetMatchEnded())
+            if(couldownStartMatch > 0)
             {
-                matchs.Clear();
-                MatchBehaviour match = new MatchBehaviour();
-                matchs.Add(match);
-                match.AddPlayerToMatch(playersInGame[0]);
-                ClientShowMatchmakingHud(true);
-                ServerSendMatchMakingHudToClient();
+                if (startGameCounterTxt.enabled == false)
+                {
+                    startGameCounterTxt.enabled = true;
+                }
+                startGameCounterTxt.text = couldownStartMatch.ToString("0");
             }
+            else
+            {
+                if(startGameCounterTxt.enabled == true)
+                {
+                    startGameCounterTxt.enabled = false;
+                }
+            }
+
         }
+        
     }
 
     [Server]

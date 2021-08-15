@@ -1834,6 +1834,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   landingPagePanel: {fileID: 5417992697653458390}
+  lobbyUiPanel: {fileID: 5417992697588239273}
   useSteam: 0
 --- !u!4 &5417992697325957511
 Transform:

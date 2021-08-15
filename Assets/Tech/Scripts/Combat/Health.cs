@@ -29,6 +29,11 @@ public class Health : NetworkBehaviour
         }
 
     }
+    [Server]
+    public void SetCurrHealth(int health)
+    {
+        currHealth = health;
+    }
 
     [Server]
     public void DealDamage(int value)

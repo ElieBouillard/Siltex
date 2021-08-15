@@ -62,6 +62,16 @@ public class SiltexNetworkManager : NetworkManager
         player.SetPartyOwner(Players.Count == 1);
     }
 
+    [Server]
+    public void ServerReloadScene()
+    {
+        for (int i = 0; i < Players.Count; i++)
+        {
+            NetworkServer.Destroy(Players[i].gameObject);
+        }
+        Players.Clear();
+        ServerChangeScene("MainMenu");
+    }
 
     [Server]
     public void ServerSetPlayerNameDisplay(NetworkConnection conn, string newPlayerName)
@@ -71,6 +81,7 @@ public class SiltexNetworkManager : NetworkManager
     #endregion
 
     #region Client
+
     public override void OnClientConnect(NetworkConnection conn)
     {
         base.OnClientConnect(conn);

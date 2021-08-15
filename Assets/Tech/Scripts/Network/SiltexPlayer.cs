@@ -65,7 +65,7 @@ public class SiltexPlayer : NetworkBehaviour
             if (state == true)
             {
                 playerAnim.CastDeath();
-                ClientOnDie(connectionToClient);
+                ClientOnDie(connectionToClient, false);
                 Invoke(nameof(HideCharacterWhenDead), 2f);
                 Invoke(nameof(ServerCallPlayerDeath), 2.5f);
             }
@@ -95,6 +95,12 @@ public class SiltexPlayer : NetworkBehaviour
     {
         if(!isPartyOwner) { return;}
         ((SiltexNetworkManager)NetworkManager.singleton).StartGame();
+    }
+
+    [Command]
+    public void CmdReloadGame()
+    {
+        ((SiltexNetworkManager)NetworkManager.singleton).ServerReloadScene();
     }
 
     [Command]
@@ -157,6 +163,7 @@ public class SiltexPlayer : NetworkBehaviour
         ClientSetCamera?.Invoke(matchIndex);
     }
 
+
     [ClientRpc]
     private void HideCharacterWhenDead()
     {
@@ -164,12 +171,12 @@ public class SiltexPlayer : NetworkBehaviour
     }
 
     [TargetRpc]
-    private void ClientOnDie(NetworkConnection conn)
+    private void ClientOnDie(NetworkConnection conn, bool value)
     {
-        playerAgent.enabled = false;
-        playerInput.enabled = false;
-        playerSpell.enabled = false;
-        playerCollider.enabled = false;
+        playerAgent.enabled = value;
+        playerInput.enabled = value;
+        playerSpell.enabled = value;
+        playerCollider.enabled = value;
     }
     #endregion
 }
