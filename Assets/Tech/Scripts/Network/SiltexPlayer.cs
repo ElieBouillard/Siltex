@@ -10,6 +10,7 @@ public class SiltexPlayer : NetworkBehaviour
     [SerializeField] private GameObject playerParent = null;
     [SerializeField] private PlayerAnim playerAnim = null;
     [SerializeField] private NavMeshAgent playerAgent = null;
+    [SerializeField] private Collider playerCollider = null;
     [SerializeField] private PlayerInput playerInput = null;
     [SerializeField] private PlayerSpell playerSpell = null;
 
@@ -24,6 +25,7 @@ public class SiltexPlayer : NetworkBehaviour
     public static event Action<bool> AuthorityOnPartyOwnerStateUpdated;
     public static event Action ClientOnInfoUpdated;
     public static event Action<int> ClientSetCamera;
+    public static event Action<SiltexPlayer> ServerOnPlayerDeath;
 
     public string GetDisplayName()
     {
@@ -57,13 +59,23 @@ public class SiltexPlayer : NetworkBehaviour
     [Server]
     public void ServerSetPlayerDeath(bool state)
     {
-        isDead = state;
-        if(state == true)
+        if (!isDead)
         {
-            playerAnim.CastDeath();
-            ClientOnDie(connectionToClient);
-            Invoke(nameof(HideCharacterWhenDead), 2f);
+            isDead = state;
+            if (state == true)
+            {
+                playerAnim.CastDeath();
+                ClientOnDie(connectionToClient);
+                Invoke(nameof(HideCharacterWhenDead), 2f);
+                Invoke(nameof(ServerCallPlayerDeath), 2.5f);
+            }
         }
+    }
+
+    [Server]
+    public void ServerCallPlayerDeath()
+    {
+        ServerOnPlayerDeath?.Invoke(this);
     }
 
     [Server]
@@ -92,11 +104,12 @@ public class SiltexPlayer : NetworkBehaviour
     }
 
     [Server]
-    public void ServerStartMatch()
+    public void ServerStartMatch(bool value)
     {
-        playerAgent.enabled = true;
-        playerInput.enabled = true;
-        playerSpell.enabled = true;
+        playerAgent.enabled = value;
+        playerInput.enabled = value;
+        playerSpell.enabled = value;
+        playerCollider.enabled = value;
     }
     #endregion
 
@@ -130,11 +143,12 @@ public class SiltexPlayer : NetworkBehaviour
     }
 
     [Client]
-    public void ClientOnStartMatch()
+    public void ClientOnStartMatch(bool value)
     {
-        playerAgent.enabled = true;
-        playerInput.enabled = true;
-        playerSpell.enabled = true;
+        playerAgent.enabled = value;
+        playerInput.enabled = value;
+        playerSpell.enabled = value;
+        playerCollider.enabled = value;
     }
 
     [Client]
@@ -155,6 +169,7 @@ public class SiltexPlayer : NetworkBehaviour
         playerAgent.enabled = false;
         playerInput.enabled = false;
         playerSpell.enabled = false;
+        playerCollider.enabled = false;
     }
     #endregion
 }

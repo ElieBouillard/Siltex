@@ -1112,7 +1112,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1188108930}
-  - component: {fileID: 1188108932}
+  - component: {fileID: 1188108933}
   - component: {fileID: 1188108931}
   m_Layer: 0
   m_Name: MatchupManager
@@ -1152,7 +1152,7 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 
   hasSpawned: 0
---- !u!114 &1188108932
+--- !u!114 &1188108933
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1161,11 +1161,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1188108929}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70d3a9ef587c61445b432137f71e769f, type: 3}
+  m_Script: {fileID: 11500000, guid: 81308b6d4a4d63843bb138ebbc2e3bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  DisableMatchMaking: 0
   matchupHud: {fileID: 8087691122507106425}
   semiFinalsPlayerNameTxts:
   - {fileID: 2371943404375503411}
@@ -1175,11 +1176,17 @@ MonoBehaviour:
   finalsPlayerNameTxts:
   - {fileID: 2091090841197357631}
   - {fileID: 850775446247918460}
+  winnerPlayerNameTxts:
   - {fileID: 398843966}
-  WinnerPlayerNameTxts: {fileID: 398843966}
+  m_matchmakingState: 0
+  spawnPoints:
+  - {fileID: 1702031570}
+  - {fileID: 878044422}
+  - {fileID: 594188015}
+  - {fileID: 770344363}
   couldownMatchmaking: -1
+  couldownHideMatchmakingHud: -1
   couldownStartMatch: -1
-  couldownShowMatchmakingHud: -1
 --- !u!1 &1252968318
 GameObject:
   m_ObjectHideFlags: 3
@@ -2929,7 +2936,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &8087691122507106426
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1215,6 +1215,7 @@ MonoBehaviour:
   playerParent: {fileID: 9188888065765508748}
   playerAnim: {fileID: 5569631626073127683}
   playerAgent: {fileID: 3044823272196742561}
+  playerCollider: {fileID: 1100823973995036143}
   playerInput: {fileID: 5343298951122107123}
   playerSpell: {fileID: 6760067484786919538}
 --- !u!114 &5343298951122107123
@@ -1293,7 +1294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  InitialHeatlh: 100
+  InitialHeatlh: 20
   playerRenderer: {fileID: 4347856400096535628}
 --- !u!114 &54023401705785163
 MonoBehaviour:

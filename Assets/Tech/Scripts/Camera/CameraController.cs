@@ -61,11 +61,11 @@ public class CameraController : MonoBehaviour
 
     private void SetPlayerCameraPosition(int matchIndex)
     {
-        if(matchIndex == 1)
+        if(matchIndex == 0)
         {
             gameObject.transform.position = new Vector3(-12.5f, 13f, -22.5f);
         }
-        else if( matchIndex == 2)
+        else if( matchIndex == 1)
         {
             gameObject.transform.position = new Vector3(12.5f, 13f, 2.5f);
         }
